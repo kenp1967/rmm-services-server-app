@@ -54,6 +54,21 @@ public class BusinessService {
 		return saved;
 	}
 	
+	/**
+	 * This process needs a bit of work.
+	 * 
+	 * @param profile
+	 * @return
+	 */
+	public UserProfile updateNewProfile(UserProfile profile) {
+		UserProfile reconciled = null;
+		UserProfile original = this.getUserProfileById(profile.getUser().getId());
+		
+		// Much to be done for the reconciliation
+		
+		return reconciled;
+	}
+	
 	public UserProfile findUserProfile(String email) {
 		UserProfile profile = null;
 		
@@ -76,6 +91,20 @@ public class BusinessService {
 		}
 		
 		return profile;
+	}
+	
+	public void deleteUserProfileByEmail(String email) {
+		
+		UserProfile profile = this.findUserProfile(email);
+		this.repository.deleteUser(profile.getUser());
+
+	}
+	
+	public void deleteUserProfileById(String id) {
+		
+		UserProfile profile = this.getUserProfileById(id);
+		this.repository.deleteUser(profile.getUser());
+
 	}
 	
 	protected UserProfile comepleteProfile(User user) {

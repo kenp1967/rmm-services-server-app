@@ -111,7 +111,7 @@ public class DataRepository implements Serializable {
 	public List<Service> retrieveUserServices(UserInput input) {
 		Service service = null;
 		List<Service> services = new ArrayList<Service>();
-		List<String> serviceIds = this.template.queryForList("SELECT serviceid FROM user_service WHERE userid = ?", String.class, input.getId());
+		List<String> serviceIds = this.template.queryForList("SELECT serviceid FROM user_services WHERE userid = ?;", String.class, input.getId());
 		
 		for(String id : serviceIds) {
 			service = this.manager.find(Service.class, id);
@@ -139,7 +139,7 @@ public class DataRepository implements Serializable {
 		
 		// Key is always serviceid
 		for(Entry<String, String> entry : links) {
-			total += this.template.update("INSERT INTO user_service VALUES (?, ?);", entry.getKey(), entry.getValue());
+			total += this.template.update("INSERT INTO user_services VALUES (?, ?);", entry.getKey(), entry.getValue());
 		}
 		
 		return total;

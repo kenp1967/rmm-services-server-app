@@ -25,3 +25,6 @@ java -jar <<filename>>.jar
 
 Executable war files can be run in the same fashion.  As a war file it can also be deployed to
 any compliant servlet container.
+
+The spring-boot:run has been updated to initialize seed data from the fullinit.sql file in order 
+to facilitate the testing of get(s) and delete(s) and update(s).

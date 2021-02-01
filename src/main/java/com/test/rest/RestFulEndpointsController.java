@@ -7,12 +7,14 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
 
-import javax.websocket.server.PathParam;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -60,8 +62,24 @@ public class RestFulEndpointsController implements Serializable {
 		return serviceCollection;
 	}
 	
+	@PutMapping("/profile/create")
+	public ResponseEntity<UserProfile> createProfile(UserProfile input) {
+		UserProfile profile = this.service.createNewProfile(input);
+		
+		ResponseEntity<UserProfile> profileResponse = new ResponseEntity<UserProfile>(profile, HttpStatus.OK);
+		return profileResponse;
+	}
+	
+	@PostMapping("/profile/update")
+	public ResponseEntity<UserProfile> updateProfile(UserProfile input) {
+		UserProfile profile = this.service.createNewProfile(input);
+		
+		ResponseEntity<UserProfile> profileResponse = new ResponseEntity<UserProfile>(profile, HttpStatus.OK);
+		return profileResponse;
+	}
+	
 	@GetMapping("/profile/find/{email}")
-	public ResponseEntity<UserProfile> retrieveProfileByEmail(@PathParam("email") String email) {
+	public ResponseEntity<UserProfile> retrieveProfileByEmail(@PathVariable("email") String email) {
 		UserProfile profile = this.service.findUserProfile(email);
 		
 		ResponseEntity<UserProfile> profileResponse = new ResponseEntity<UserProfile>(profile, HttpStatus.OK);
@@ -69,11 +87,27 @@ public class RestFulEndpointsController implements Serializable {
 	}
 	
 	@GetMapping("/profile/get/{id}")
-	public ResponseEntity<UserProfile> retrieveProfileById(@PathParam("id") String id) {
+	public ResponseEntity<UserProfile> retrieveProfileById(@PathVariable("id") String id) {
 		UserProfile profile = this.service.getUserProfileById(id);
 		
 		ResponseEntity<UserProfile> profileResponse = new ResponseEntity<UserProfile>(profile, HttpStatus.OK);
 		return profileResponse;
+	}
+	
+	@DeleteMapping("/profile/id/delete/{id}")
+	public ResponseEntity<Void> deleteProfileById(@PathVariable("id") String id) {
+		this.service.deleteUserProfileById(id);
+		
+		ResponseEntity<Void> deleteResponse = new ResponseEntity<Void>(HttpStatus.OK);
+		return deleteResponse;
+	}
+	
+	@DeleteMapping("/profile/email/delete/{email}")
+	public ResponseEntity<Void> deleteProfileByEmail(@PathVariable("email") String email) {
+		this.service.deleteUserProfileById(email);
+		
+		ResponseEntity<Void> deleteResponse = new ResponseEntity<Void>(HttpStatus.OK);
+		return deleteResponse;
 	}
 	
 	protected static class HeartBeat {

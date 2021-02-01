@@ -3,15 +3,19 @@
  */
 package com.test;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.Serializable;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.context.event.EventListener;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 /**
@@ -48,4 +52,54 @@ public class SpringBootConfigurationImpl implements Serializable {
 		return manager;
 	}
 	*/
+
+	@Component
+	public class DBInitializer {
+		
+		@Autowired
+		private JdbcTemplate template;
+		
+		public DBInitializer() {
+			super();
+		}
+		
+		@EventListener
+		public void initialize(ContextRefreshedEvent evt) {
+			String ddl = this.extractResourceAsText("fullinit.sql");
+			this.template.execute(ddl);
+		}
+		
+		protected String extractResourceAsText(String resource) {
+			StringBuilder text = new StringBuilder();
+			
+			try (BufferedReader reader = new BufferedReader(new InputStreamReader(obtainResourceStream(resource)))) {
+				String line = null;
+				
+				while((line = reader.readLine()) != null) {
+					text.append(line);
+					text.append("\n");
+				}
+			} catch (Throwable t) {
+				throw new RuntimeException(t);
+			}
+			
+			return text.toString();
+		}
+		
+		protected InputStream obtainResourceStream(String resource) {
+			InputStream stream = null;
+			
+			stream = this.getClass().getResourceAsStream(resource);
+			
+			if(stream == null) {
+				stream = Thread.currentThread().getContextClassLoader().getResourceAsStream(resource);
+			}
+			
+			if(stream == null) {
+				stream = ClassLoader.getSystemResourceAsStream(resource);
+			}
+			
+			return stream;
+		}
+	}
 }
